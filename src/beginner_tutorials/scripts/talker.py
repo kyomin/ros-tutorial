@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import rospy                    # ROS 파이썬을 위한 rospy 모듈 전체 가져오기.
 from std_msgs.msg import String # std_msgs.msg 모듈 내에서 String만 콕 찍어 가져오기.
 
