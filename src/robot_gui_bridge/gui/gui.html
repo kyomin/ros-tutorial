@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+
+        <!-- Robot Web Tools CND에서 축소된 버전의 roslib를 가져와 스크립트를 시작한다. -->
+        <script type="text/javascript" src="https://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+
+        <script type="text/javascript">
+            /*
+                여기서 나중에 다른 노드와 통신하는 데 사용할 ROS 객체를 만든다.
+                현재 동일한 시스템에서 UI와 rosbridge를 실행하고 있으므로
+                localhost 및 기본 roslib websocket 포트 9090에서 수신 대기하고 있다.
+            */
+            var ros = new ROSLIB.Ros({
+                url: 'ws://localhost:9090'
+            });
+
+            /*
+                ROS 이벤트(바로 아래의 경우는 연결 이벤트)에 대한 리스너를 생성한다.
+                이벤트가 발생하면 'status' ID가 있는 html 요소를 찾고,
+                내부 html을 표시하려는 메시지로 변경한다.
+            */
+            ros.on('connection', function() {
+                document.getElementById('status').innerHTML = 'Connected';
+            });
+
+            ros.on('error', function(error) {
+                document.getElementById('status').innerHTML = 'Error';
+            });
+
+            ros.on('close', function() {
+                document.getElementById('status').innerHTML = 'Closed';
+            });
+
+
+            /*
+                위에서 ROS 통신을 위한 준비 과정을 마쳤다면,
+                다음 단계로 문자열 메시지를 수락하고 브라우저 창에 표시할 topic을 subscribe 한다.
+
+                아래의 코드는 /txt_msg topic의 메시지를 수신하고,
+                String 유형의 메시지를 수락하는 txt_listener 객체를 선언한다.
+            */
+            var txt_listener = new ROSLIB.Topic({
+                ros: ros,
+                name: '/txt_msg',
+                messageType: 'std_msgs/String'
+            });
+
+            /*
+                위의 topic 리스너 객체 선언이 끝난 후, 
+                "msg"라는 id를 가진 span 요소의 내부 html을
+                메시지의 데이터 필드로 변경하는 익명 함수를 호출하는 이벤트 리스너를 만든다.
+
+                이 코드를 테스트 하려면 다음의 절차를 따른다.
+
+                1. websocket launch 파일을 /catkin_ws 경로에서 다음 명령어로 시작한다.
+                    roslaunch robot_gui_bridge websocket.launch
+                    roslaunch [패키지명]         [런치파일명]
+
+                2. 원하는 브라우저에서 현 웹 사이트(gui.html)를 연다.
+
+                3. 이제 연결 상태에 "Connected"라는 텍스트가 표시된다.
+
+                4. 터미널에서 다음 명령어를 통해 /txt_msg topic에 메시지를 퍼블리시 한다.
+                    rostopic pub /txt_msg std_msgs/String "Test message"
+                    rostopic pub [토픽 이름] [메시지 타입]     [파라미터]
+
+                5. "Test message"라는 텍스트가 우리가 지정한 
+            */
+            txt_listener.subscribe(function(m) {
+                document.getElementById('msg').innerHTML = m.data;
+            });
+        </script>
+    </head>
+
+    <body>
+        <h1>Simple ROS User Interface</h1>
+        <p>Connection status: <span id="status"></span></p>
+        <p>Last /txt_msg received: <span id="msg"></span></p>
+    </body>
+</html>
