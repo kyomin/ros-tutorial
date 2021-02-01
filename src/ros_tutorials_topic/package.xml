@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>ros_tutorials_topic</name>
+  <version>0.1.0</version>
+  <description>ROS tutorial package to learn the topic</description>
+  <maintainer email="kim031504@naver.com">Kyomin Kim</maintainer>
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <build_depend>message_generation</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+  
+  <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+  
+  <!-- 
+    CMakeList.txt의 catkin_package 안의 CATKIN_DEPENDS에 명시된
+    의존성들은 여기에 명시해야지 빌드 에러가 발생하지 않는다.
+  -->
+  <exec_depend>message_generation</exec_depend>
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+</package>
